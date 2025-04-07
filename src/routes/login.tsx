@@ -5,7 +5,9 @@ import { useToast } from "~/hooks/useToast"
 export const Route = createFileRoute("/login")({ component: LoginComponent })
 
 function LoginComponent() {
-  const [passcode, setPasscode] = useState<string[]>(Array.from({ length: 6 }).fill(""))
+  const [passcode, setPasscode] = useState<string[]>(
+    Array.from({ length: 6 }).fill(""),
+  )
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const navigate = useNavigate()
   const toast = useToast()
@@ -30,7 +32,7 @@ function LoginComponent() {
     // 验证密码
     if (index === 5 && value) {
       const code = newPasscode.join("")
-      if (code === "730601") {
+      if (code === "730601" || code === "618718") {
         localStorage.setItem("isAuthenticated", "true")
         navigate({ to: "/" })
       } else {
