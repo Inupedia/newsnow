@@ -32,11 +32,7 @@ function LoginComponent() {
     // 验证密码
     if (index === 5 && value) {
       const code = newPasscode.join("")
-      const validPasscodes = Object.entries(import.meta.env)
-        .filter(([key]) => key.startsWith("VITE_PASSCODE_"))
-        .map(([, value]) => value)
-        .filter(Boolean)
-      if (validPasscodes.includes(code)) {
+      if (code === "730601" || code === "618718") {
         localStorage.setItem("isAuthenticated", "true")
         navigate({ to: "/" })
       } else {
