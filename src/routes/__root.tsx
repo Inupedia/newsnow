@@ -1,6 +1,10 @@
 import "~/styles/globals.css"
 import "virtual:uno.css"
-import { Outlet, createRootRouteWithContext } from "@tanstack/react-router"
+import {
+  Outlet,
+  createRootRouteWithContext,
+  redirect,
+} from "@tanstack/react-router"
 import { TanStackRouterDevtools } from "@tanstack/router-devtools"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import type { QueryClient } from "@tanstack/react-query"
@@ -13,6 +17,15 @@ import { SearchBar } from "~/components/common/search-bar"
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient
 }>()({
+  beforeLoad: ({ location }) => {
+    // 如果不是登录页面且没有登录，重定向到登录页面
+    const isAuthenticated = localStorage.getItem("isAuthenticated") === "true"
+    if (!isAuthenticated && location.pathname !== "/login") {
+      throw redirect({
+        to: "/login",
+      })
+    }
+  },
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
 })
@@ -30,11 +43,12 @@ function RootComponent() {
   usePWA()
   return (
     <>
-      <GlobalOverlayScrollbar className={$([
-        "h-full overflow-x-auto px-4",
-        "md:(px-10)",
-        "lg:(px-24)",
-      ])}
+      <GlobalOverlayScrollbar
+        className={$([
+          "h-full overflow-x-auto px-4",
+          "md:(px-10)",
+          "lg:(px-24)",
+        ])}
       >
         <header
           className={$([
@@ -48,12 +62,13 @@ function RootComponent() {
         >
           <Header />
         </header>
-        <main className={$([
-          "mt-2",
-          "min-h-[calc(100vh-180px)]",
-          "md:(min-h-[calc(100vh-175px)])",
-          "lg:(min-h-[calc(100vh-194px)])",
-        ])}
+        <main
+          className={$([
+            "mt-2",
+            "min-h-[calc(100vh-180px)]",
+            "md:(min-h-[calc(100vh-175px)])",
+            "lg:(min-h-[calc(100vh-194px)])",
+          ])}
         >
           <Outlet />
         </main>

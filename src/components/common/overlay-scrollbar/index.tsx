@@ -16,13 +16,28 @@ const defaultScrollbarParams: UseOverlayScrollbarsParams = {
   defer: true,
 }
 
-export function OverlayScrollbar({ disabled, children, options, events, defer, className, ...props }: PropsWithChildren<Props>) {
+export function OverlayScrollbar({
+  disabled,
+  children,
+  options,
+  events,
+  defer,
+  className,
+  ...props
+}: PropsWithChildren<Props>) {
   const ref = useRef<HTMLDivElement>(null)
-  const scrollbarParams = useMemo(() => defu<UseOverlayScrollbarsParams, Array<UseOverlayScrollbarsParams> >({
-    options,
-    events,
-    defer,
-  }, defaultScrollbarParams), [options, events, defer])
+  const scrollbarParams = useMemo(
+    () =>
+      defu<UseOverlayScrollbarsParams, Array<UseOverlayScrollbarsParams>>(
+        {
+          options,
+          events,
+          defer,
+        },
+        defaultScrollbarParams,
+      ),
+    [options, events, defer],
+  )
 
   const [initialize, instance] = useOverlayScrollbars(scrollbarParams)
 
@@ -49,36 +64,44 @@ export function OverlayScrollbar({ disabled, children, options, events, defer, c
   }, [instance])
 
   return (
-    <div ref={ref} {...props} className={$("overflow-auto scrollbar-hidden", className)}>
+    <div
+      ref={ref}
+      {...props}
+      className={$("overflow-auto scrollbar-hidden", className)}
+    >
       {/* 只能有一个 element */}
       <div>{children}</div>
     </div>
   )
 }
 
-export function GlobalOverlayScrollbar({ children, className, ...props }: PropsWithChildren<HTMLProps<HTMLDivElement>>) {
+export function GlobalOverlayScrollbar({
+  children,
+  className,
+  ...props
+}: PropsWithChildren<HTMLProps<HTMLDivElement>>) {
   const ref = useRef<HTMLDivElement>(null)
   const lastTrigger = useRef(0)
   const timer = useRef<any>(null)
   const setGoToTop = useSetAtom(goToTopAtom)
-  const onScroll = useCallback((e: Event) => {
-    const now = Date.now()
-    if (now - lastTrigger.current > 50) {
-      lastTrigger.current = now
-      clearTimeout(timer.current)
-      timer.current = setTimeout(
-        () => {
+  const onScroll = useCallback(
+    (e: Event) => {
+      const now = Date.now()
+      if (now - lastTrigger.current > 50) {
+        lastTrigger.current = now
+        clearTimeout(timer.current)
+        timer.current = setTimeout(() => {
           const el = e.target as HTMLElement
           setGoToTop({
             ok: el.scrollTop > 100,
             el,
             fn: () => el.scrollTo({ top: 0, behavior: "smooth" }),
           })
-        },
-        500,
-      )
-    }
-  }, [setGoToTop])
+        }, 500)
+      }
+    },
+    [setGoToTop],
+  )
   const [initialize, instance] = useOverlayScrollbars({
     options: {
       scrollbars: {
@@ -118,7 +141,11 @@ export function GlobalOverlayScrollbar({ children, className, ...props }: PropsW
   }, [instance])
 
   return (
-    <div ref={ref} {...props} className={$("overflow-auto scrollbar-hidden", className)}>
+    <div
+      ref={ref}
+      {...props}
+      className={$("overflow-auto scrollbar-hidden", className)}
+    >
       <div>{children}</div>
     </div>
   )
